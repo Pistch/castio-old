@@ -1,0 +1,27 @@
+{
+  "name": "castio",
+  "version": "0.0.5",
+  "description": "Radio hosting server",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "castio"
+  },
+  "keywords": [
+    "radio",
+    "broadcast",
+    "broadcasting",
+    "audio"
+  ],
+  "author": "pistch",
+  "license": "MIT",
+  "dependencies": {
+    "formidable": "^1.1.1",
+    "mongodb": "^2.2.24",
+    "music-metadata": "^0.6.1",
+    "node-static": "^0.7.9"
+  }
+}

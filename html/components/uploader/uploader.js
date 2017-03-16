@@ -3,13 +3,14 @@
 class Uploader {
   constructor (container) {
     this.container = container;
-    this.container.innerHTML = '<input type="file" name="upload">'+
-      '<button onclick="uploader.sendTrack()">Upload</button>';
+    this.container.innerHTML = '<form name="test" method="post" enctype="multipart/form-data">' + 
+    	'<input type="file" name="upload">'+
+    	'<button onclick="uploader.sendTrack()">Upload</button>' + '</form>';
   }
 
 
   sendTrack() {
-    let file = this.container.querySelector('input').files[0];
+    let file = new FormData(this.container.querySelector('form'));
     if (!file) return;
     let xhr = new XMLHttpRequest();
 

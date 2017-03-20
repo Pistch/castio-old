@@ -3,25 +3,23 @@
 class Playlist {
   constructor (playlistElem, playerLink) {
     this.tracks = [];
-    this.tracksInfo = [];
     this.currentTrack = 0;
     this.controlsIface = playlistElem;
     this.controlsIface.innerHTML = '<p style="text-align: right;"><i>No tracks yet. Please use the library -> <br/>to add some!</i></p>';
     this.player = playerLink;
     this.player.playlist = this;
     this._setUp();
+
   }
 
-  addTrack (params, position) {
-    if (this.allowDuplicateTracks === false && this.tracks.indexOf(params.name) != (-1)) throw new Error('This track is already in playlist!');
+  addTrack (trackInfo, position) {
+    if (this.allowDuplicateTracks === false && this._inPlaylist(trackInfo)) throw new Error('This track is already in playlist!');
     if (position === 0 || position) {
-      this.tracks.splice(position,0,params.name);
-      this.tracksInfo.splice(position,0,{'source': params.src});
+      this.tracks.splice(position,0,trackInfo);
     } else {
-      this.tracks.push(params.name);
-      this.tracksInfo.push({'source': params.src});
+      this.tracks.push(trackInfo);
     };
-    if (!this.player.src) this.player.setAttribute("src", params.src);
+    if (!this.player.src) this.player.setAttribute("src", trackInfo.filename);
     this.renderPlaylist();
   }
 
@@ -63,12 +61,12 @@ class Playlist {
     } else {
       this.currentTrack++;
     };
-    this.player.turnTrack(this.tracksInfo[this.currentTrack].source);
+    this.player.turnTrack(this.tracks[this.currentTrack].filename);
   }
 
   previousTrack () {
     this.currentTrack--;
-    this.player.turnTrack(this.tracksInfo[this.currentTrack].source);
+    this.player.turnTrack(this.tracks[this.currentTrack].filename);
   }
 
   turnTrack (name) {
@@ -77,7 +75,7 @@ class Playlist {
     } else {
       this.currentTrack = name;
     };
-    this.player.turnTrack(this.tracksInfo[this.currentTrack].source);
+    this.player.turnTrack(this.tracks[this.currentTrack].filename);
   }
 
   renderPlaylist () {
@@ -86,11 +84,11 @@ class Playlist {
       this.controlsIface.innerHTML = 'No tracks in playlist. Please add some ->';
       return;
     };
-    this.tracks.forEach((item, i) => {
+    this.tracks.forEach((item, i, arr) => {
       let track = document.createElement('div');
-      track.innerHTML = i + '. ' + item;
+      track.innerHTML = item.artist + ' - ' + item.title;
       track.classList.add('playlist_item');
-      track.dataset.trackName = item;
+      track.dataset.trackName = item.title;
       track.dataset.trackNumber = i;
       track.addEventListener('click', (e) => {
         if (!e.target.classList.contains('playlist_item')) return;
@@ -105,6 +103,28 @@ class Playlist {
       });
       this.controlsIface.appendChild(track);
     }, this);
+  }
+
+  _reorder (arr) {
+    let temp = [];
+    let coll = document.querySelectorAll('#playlist .playlist_item');
+    for (let i = 0; i < arr.length; i++) {
+      console.log(coll[i]);
+      coll[i].dataset.trackNumber = i;
+      if (i == this.currentTrack) this.currentTrack = +arr[i];
+      console.log('moving track ' + (+arr[i]) + ' to ' + i + 'position');
+      temp[i] = this.tracks[(+arr[i])];
+    };
+    this.tracks = temp;
+  }
+
+  _inPlaylist(info) {
+    for (let i = 0; i < this.tracks.length; i++) {
+      if (this.tracks[i].title == info.title) {
+        return true;
+      };
+    };
+    return false;
   }
 
   _setUp () {

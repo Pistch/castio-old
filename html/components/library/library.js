@@ -83,7 +83,7 @@ class Library {
       goUpLink.addEventListener('click', this.goUp.bind(this));
       categoryListing.append(goUpLink);
     };
-    objToExplore.forEach((track) => {
+    objToExplore.forEach((track, num, category) => {
       let libraryItem = document.createElement('div');
       let trackDuration = (track.duration - track.duration % 60)/60 + ':' +
                           Math.ceil(track.duration % 60);
@@ -96,7 +96,7 @@ class Library {
         libraryItem.addEventListener('click', this.openCategory.bind(this, key));
       } else {
         libraryItem.classList.add('track');
-        libraryItem.addEventListener('click', playlist.addTrack.bind(playlist, {'name': libraryItem.dataset.trackName, 'src': track.filename}, undefined));
+        libraryItem.addEventListener('click', playlist.addTrack.bind(playlist, track, undefined));
       };
       categoryListing.append(libraryItem);
     });
